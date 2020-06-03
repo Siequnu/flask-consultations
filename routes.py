@@ -8,6 +8,12 @@ from .models import Consultation
 import app.models
 from app.models import User
 
+# Render this blueprint's javascript
+@bp.route("/js")
+@login_required
+def js():
+    return render_template('js/consultations.js')
+
 # Consultations home page
 @bp.route("/")
 @login_required
