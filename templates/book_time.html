@@ -1,0 +1,60 @@
+{% extends "header.html" %} {% block app_content %}
+{% from 'bootstrap/form.html' import render_form %}
+
+{% block scripts %}
+{{ super() }}
+<link rel="stylesheet" href="http://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+<script src="http://code.jquery.com/jquery-1.10.2.js"></script>
+<script src="http://code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+<script src="/static/js/consultations.js"></script>
+<script>
+  // Define variables that are used by the appointments JS library
+  var current_user_id = '{{ current_user.id }}';
+  var student_id = '{{ student.id }}';
+</script>
+
+{% endblock %}
+
+<br>
+<div class="container">
+  <div class="row">
+    <div class="col-md-12">
+      <h1><i class="fa fa-calendar-plus"></i> Schedule a consultation with {{student.username}}</h1>
+      <hr>
+      <h6>You can add as many time slot options as you like. </h6>
+      <h6>When you are done, press Create consultation to continue.</h6>
+    </div>
+  </div>
+  
+  <br>
+  
+  <div class="row text-center">
+    <div class="col">
+        <div class="counter">
+            <i class="fa fa-clock fa-2x"></i>
+            <h2 class="timer count-title count-number">Add a time slot</h2>
+            <br>
+              {{ render_form(form, button_style='outline-dark') }}
+        </div>
+    </div>
+    <div class="col">
+        <div class="counter">
+            <i class="fa fa-calendar-day fa-2x"></i>
+            <h2 class="timer count-title count-number">Time options</h2>
+            <br>
+            <div class="bookings">
+              <!-- The bookings will be inserted here by the JS -->
+            </div>
+            <a id="submit-all" class="btn btn-success" href="#" role="button">Create consultation option <i class="fa fa-chevron-right"></i></a>
+        </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+{% endblock %}
+
+
+
