@@ -34,7 +34,9 @@ def view_consultation(consultation_id):
 	# View a list of consultations 
 	if current_user.is_authenticated and app.models.is_admin(current_user.username):
 		consultation = Consultation.query.get(consultation_id)
-		student = User.query.get(consultation.student_id)
+		if consultation is None:
+			abort (404)
+		student = User.query.get(consultation.student_id)	
 		return render_template('view_consultation.html', consultation = consultation, student = student)
 	
 
