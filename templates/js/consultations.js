@@ -5,8 +5,8 @@ $('#submit-all').hide();
 $('#datefield').datepicker ({dateFormat: 'yy-mm-dd'});
 $('#start_time, #end_time').timepicker({
 	'timeFormat': 'H:i',
-	'step': 15,
 	'minTime': '07:00am',
+	'step': 15
 });
 
 $('#end_time').timepicker('option', 'showDuration', true)
@@ -15,6 +15,9 @@ $('#end_time').timepicker('option', 'showDuration', true)
 $(document).on('change', '#start_time', function (e) {
 	// Get the date object
 	var dateObject = $('#start_time').timepicker('getTime');
+
+	// Add 15 minutes, using moment library
+	//var newTime = moment(dateObject).add(15, 'm').toDate();
 
 	// Update end_time timepicker
 	$('#end_time').timepicker('option', 'minTime', dateObject);
