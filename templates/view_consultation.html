@@ -17,6 +17,10 @@
     <i class="fa fa-trash-alt">
     </i> Delete this appointment
   </a>
+  <a href="{{url_for('consultations.upload_prereading_file', consultation_id = consultation.id)}}" class="btn btn-outline-primary btn-sm" role="button">
+    <i class="fa fa-file-upload">
+    </i> Upload prereading file
+  </a>
   <br><br>
   <div class="card bg-light mb-3">
     <div class="card-body">
@@ -39,14 +43,20 @@
               <li class="list-inline-item">
                 <i class="fa fa-calendar" aria-hidden="true">
                 </i> on June the 17th
+                
               </li>
               
-              <a href="#">
-                <li class="list-inline-item">
-                  <i class="fa fa-info-circle" aria-hidden="true">
-                  </i> Pre-reading: UCAS admissions help
-                </li>
-              </a>
+              {% for file in prereading_files %}
+              <li class="list-inline-item">
+                <i class="fa fa-info-circle" aria-hidden="true">
+                </i> {{file.original_filename}}
+                <a href="{{url_for('consultations.delete_prereading_file', consultation_id = consultation.id, prereading_file_id = file.id)}}" class="btn btn-outline-warning btn-sm" role="button">
+                  <i class="fa fa-trash-alt">
+                  </i> Delete
+                </a>
+             </li> 
+             {% endfor %}
+             
               
             </ul>
             <em>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.

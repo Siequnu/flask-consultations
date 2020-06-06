@@ -4,9 +4,11 @@ from flask_login import current_user, login_required
 from . import bp, models
 from .forms import ConsultationTimeForm
 
-from .models import Consultation
+from .models import Consultation, ConsultationPrereadingFile
 import app.models
 from app.models import User
+
+import os
 
 # Render this blueprint's javascript
 @bp.route("/js/<filename>")
@@ -38,7 +40,8 @@ def view_consultation(consultation_id):
 		if consultation is None:
 			abort (404)
 		student = User.query.get(consultation.student_id)	
-		return render_template('view_consultation.html', consultation = consultation, student = student)
+		prereading_files = ConsultationPrereadingFile.query.filter_by(consultation_id = consultation.id).all()
+		return render_template('view_consultation.html', consultation = consultation, student = student, prereading_files = prereading_files)
 	
 
 # Search for a student
@@ -67,7 +70,8 @@ def book_consultation_set_time(student_id):
 @login_required
 def book_consultation_redirect(student_id):
 	return redirect (url_for ('consultations.view_consultations'))
-	
+
+# Delete a consultation from ID	
 @bp.route('/delete/<consultation_id>')
 @login_required
 def delete_consultation(consultation_id):
@@ -88,4 +92,32 @@ def delete_consultation(consultation_id):
 			return redirect(url_for('consultations.view_consultations'))
 	abort (403)
 
+# Add a pre-reading file
+@bp.route('/<consultation_id>/prereading/add', methods=['GET', 'POST'])
+@login_required
+def upload_prereading_file(consultation_id):
+	if request.method == 'POST':
+		file_obj = request.files
+		for f in file_obj:
+			file = request.files.get(f)
+			models.new_prereading_file (file, consultation_id)
 
+	if current_user.is_authenticated and app.models.is_admin(current_user.username):
+		consultation = Consultation.query.get(consultation_id)
+		if consultation is None:
+			flash('This consultation could not be found.', 'error')
+			return redirect(url_for('consultations.view_consultations'))	
+		else:
+			return render_template ('upload_prereading.html', consultation = consultation)
+	else:
+		abort (403)
+
+# Delete a pre-reading file
+@bp.route('/<consultation_id>/prereading/delete/<prereading_file_id>', methods=['GET', 'POST'])
+@login_required
+def delete_prereading_file (consultation_id, prereading_file_id):
+	prereading_file = ConsultationPrereadingFile.query.get(prereading_file_id)
+	if prereading_file is not None:
+		prereading_file.delete ()
+	flash ('Deleted the file successfully', 'success')
+	return redirect(url_for('consultations.view_consultation', consultation_id = consultation_id))	
