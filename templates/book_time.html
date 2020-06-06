@@ -1,8 +1,8 @@
 {% extends "header.html" %} {% block app_content %}
 {% from 'bootstrap/form.html' import render_form %}
 
-{% block scripts %}
-{{ super() }}
+{% block templateScripts %}
+
 <link rel="stylesheet" href="http://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
 <script src="http://code.jquery.com/jquery-1.10.2.js"></script>
 <script src="http://code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
@@ -13,8 +13,7 @@
   var current_user_id = '{{ current_user.id }}';
   var student_id = '{{ student.id }}';
 </script>
-
-{% endblock %}
+{% endblock templateScripts %}
 
 <br>
 <div class="container">
