@@ -9,7 +9,7 @@
 
 <!-- timePicker library -->
 <script src="{{url_for ('consultations.js', filename = 'jquery.timepicker.min.js')}}"></script>
-<link rel="stylesheet" href="/static/css/jquery.timepicker.css" />
+<link rel="stylesheet" href="{{url_for('.static', filename= 'jquery.timepicker.min.css')}}" />
 
 <!-- Consultations submodule library -->
 <script src="{{url_for ('consultations.js', filename = 'consultations.js')}}"></script>
