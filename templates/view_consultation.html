@@ -9,7 +9,15 @@
 </div>
 </div>
 <br>
+{% if current_user.is_admin %}
+
+{% endif %}
 <div class="container">
+  <a href="{{url_for('consultations.delete_consultation', consultation_id = consultation.id)}}" class="btn btn-outline-danger btn-sm" role="button">
+    <i class="fa fa-trash-alt">
+    </i> Delete this appointment
+  </a>
+  <br><br>
   <div class="card bg-light mb-3">
     <div class="card-body">
       <div class="container">
@@ -80,7 +88,8 @@
                 <li class="list-group-item"><i class="fa fa-book-open" aria-hidden="true"> Annex 1: Sed do </i></li>
             </ul> 
             
-            <br><br><a href="#" class="btn btn-secondary btn-sm" role="button">
+            <br><br>
+            <a href="#" class="btn btn-secondary btn-sm" role="button">
             <i class="fa fa-download">
             </i> Download PDF report
           </a>
