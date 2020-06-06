@@ -1,8 +1,24 @@
 // Hide the submit button on load
 $('#submit-all').hide();
 
-// Enable the datefield to use UI datepicker
+// Enable the datefield to use UI datepicker and timepicker
 $('#datefield').datepicker ({dateFormat: 'yy-mm-dd'});
+$('#start_time, #end_time').timepicker({
+	'timeFormat': 'H:i',
+	'step': 15,
+	'minTime': '07:00am',
+});
+
+$('#end_time').timepicker('option', 'showDuration', true)
+
+// On updating the start time, change the end_time to 15 minutes after
+$(document).on('change', '#start_time', function (e) {
+	// Get the date object
+	var dateObject = $('#start_time').timepicker('getTime');
+
+	// Update end_time timepicker
+	$('#end_time').timepicker('option', 'minTime', dateObject);
+});
 
 // On submitting a time-slot, add this to the right column
 $(':submit').click (function (event) {

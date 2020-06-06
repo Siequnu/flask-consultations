@@ -9,10 +9,11 @@ import app.models
 from app.models import User
 
 # Render this blueprint's javascript
-@bp.route("/js")
+@bp.route("/js/<filename>")
 @login_required
-def js():
-    return render_template('js/consultations.js')
+def js(filename):
+	filepath = 'js/' + filename
+	return render_template(filepath) # is send_from_directory('/templates/js/', path) a safer approach?
 
 # Consultations home page
 @bp.route("/")

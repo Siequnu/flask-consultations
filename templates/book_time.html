@@ -2,12 +2,18 @@
 {% from 'bootstrap/form.html' import render_form %}
 
 {% block templateScripts %}
-
-<link rel="stylesheet" href="http://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
-<script src="http://code.jquery.com/jquery-1.10.2.js"></script>
+<!-- jQuery libraries -->
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 <script src="http://code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+<link rel="stylesheet" href="http://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
 
-<script src="{{url_for ('consultations.js')}}"></script>
+<!-- timePicker library -->
+<script src="{{url_for ('consultations.js', filename = 'jquery.timepicker.min.js')}}"></script>
+<link rel="stylesheet" href="/static/css/jquery.timepicker.css" />
+
+<!-- Consultations submodule library -->
+<script src="{{url_for ('consultations.js', filename = 'consultations.js')}}"></script>
+
 <script>
   // Define variables that are used by the appointments JS library
   var current_user_id = '{{ current_user.id }}';
