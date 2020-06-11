@@ -35,7 +35,7 @@ class ConsultationPrereadingFile (db.Model):
 	timestamp = db.Column(db.DateTime, index=True, default=datetime.now())
 	uploader_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 	consultation_id = db.Column(db.Integer, db.ForeignKey('consultation.id'))
-	original_filename = db.Column(db.String(140))flask 
+	original_filename = db.Column(db.String(140))
 	filename = db.Column(db.String(140))
 	description = db.Column(db.String(1000))
 	
