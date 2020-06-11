@@ -124,15 +124,16 @@ def delete_consultation(consultation_id):
 @login_required
 def save_consultation_details(consultation_id):
 	if app.models.is_admin(current_user.username):
-		form = ConsultationDetailsForm()
-		if form.validate_on_submit():
-			consultation = Consultation.query.get(consultation_id)
-			if consultation is not None:
+		consultation = Consultation.query.get(consultation_id)
+		if consultation is not None:
+			form = ConsultationDetailsForm(obj=consultation)
+			if form.validate_on_submit():
 				consultation.save_consultation_details(
 					form.title.data, form.description.data)
 				flash('Saved the consultation details', 'success')
-			return redirect(url_for('consultations.view_consultation', consultation_id=consultation_id))
-		return render_template('save_consultation_details.html', title='Save consultation details', form=form, consultation_id=consultation_id)
+				return redirect(url_for('consultations.view_consultation', consultation_id=consultation_id))
+			return render_template('save_consultation_details.html', title='Save consultation details', form=form, consultation_id=consultation_id)
+		abort (404)
 	abort(403)
 
 
