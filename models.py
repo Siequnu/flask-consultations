@@ -13,6 +13,8 @@ class Consultation (db.Model):
 	end_time = db.Column(db.Time)
 	teacher_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 	student_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+	title = db.Column(db.String(300))
+	description = db.Column(db.String(2000))
 	
 	def __repr__(self):
 		return '<Consultation {}>'.format(self.id)
@@ -20,6 +22,12 @@ class Consultation (db.Model):
 	def delete (self):
 		db.session.delete (self)
 		db.session.commit ()
+	
+	def save_consultation_details (self, title, description):
+		self.title = title
+		self.description = description
+		db.session.commit ()
+
 
 class ConsultationPrereadingFile (db.Model):
 	__table_args__ = {'sqlite_autoincrement': True}
@@ -33,6 +41,36 @@ class ConsultationPrereadingFile (db.Model):
 	
 	def __repr__(self):
 		return '<Pre-reading file {}>'.format(self.id)
+
+	def delete (self):
+		db.session.delete (self)
+		db.session.commit ()
+
+class ConsultationReport (db.Model):
+	__table_args__ = {'sqlite_autoincrement': True}
+	id = db.Column(db.Integer, primary_key=True)
+	teacher_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+	
+	
+	def __repr__(self):
+		return '<Consultation {}>'.format(self.id)
+
+	def delete (self):
+		db.session.delete (self)
+		db.session.commit ()
+
+class ConsultationReportFile (db.Model):
+	__table_args__ = {'sqlite_autoincrement': True}
+	id = db.Column(db.Integer, primary_key=True)
+	timestamp = db.Column(db.DateTime, index=True, default=datetime.now())
+	uploader_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+	consultation_id = db.Column(db.Integer, db.ForeignKey('consultation.id'))
+	original_filename = db.Column(db.String(140))
+	filename = db.Column(db.String(140))
+	description = db.Column(db.String(1000))
+	
+	def __repr__(self):
+		return '<Consultation report file {}>'.format(self.id)
 
 	def delete (self):
 		db.session.delete (self)
