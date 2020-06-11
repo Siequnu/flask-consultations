@@ -35,7 +35,7 @@ class ConsultationPrereadingFile (db.Model):
 	timestamp = db.Column(db.DateTime, index=True, default=datetime.now())
 	uploader_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 	consultation_id = db.Column(db.Integer, db.ForeignKey('consultation.id'))
-	original_filename = db.Column(db.String(140))
+	original_filename = db.Column(db.String(140))flask 
 	filename = db.Column(db.String(140))
 	description = db.Column(db.String(1000))
 	
@@ -49,11 +49,13 @@ class ConsultationPrereadingFile (db.Model):
 class ConsultationReport (db.Model):
 	__table_args__ = {'sqlite_autoincrement': True}
 	id = db.Column(db.Integer, primary_key=True)
+	consultation_id = db.Column(db.Integer, db.ForeignKey('consultation.id'))
 	teacher_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-	
+	summary = db.Column(db.String(250))
+	report = db.Column(db.String(250))
 	
 	def __repr__(self):
-		return '<Consultation {}>'.format(self.id)
+		return '<Consultation report {}>'.format(self.id)
 
 	def delete (self):
 		db.session.delete (self)
@@ -64,7 +66,7 @@ class ConsultationReportFile (db.Model):
 	id = db.Column(db.Integer, primary_key=True)
 	timestamp = db.Column(db.DateTime, index=True, default=datetime.now())
 	uploader_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-	consultation_id = db.Column(db.Integer, db.ForeignKey('consultation.id'))
+	consultation_report_id = db.Column(db.Integer, db.ForeignKey('consultation_report.id'))
 	original_filename = db.Column(db.String(140))
 	filename = db.Column(db.String(140))
 	description = db.Column(db.String(1000))

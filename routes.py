@@ -185,3 +185,5 @@ def delete_prereading_file(consultation_id, prereading_file_id):
 		prereading_file.delete()
 	flash('Deleted the file successfully', 'success')
 	return redirect(url_for('consultations.view_consultation', consultation_id=consultation_id))
+
+
