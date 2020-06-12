@@ -59,23 +59,22 @@ $('#submit-all').click (function () {
 	// Send data via AJAX
 		$.ajax({
 			type: "POST",
-			url: "/api/v1/consultation/",
+			url: "/api/v1/consultation/schedule",
 			contentType: 'application/json',
 			headers: {'key': config.apiKey},
 			data: JSON.stringify({
+				consultation_id: consultation_id,
 				date: datefield,
 				start_time: start_time,
-				end_time: end_time,
-				teacher_id: current_user_id,
-				student_id: student_id
+				end_time: end_time
 			}),
 			error: function(jqXHR, textStatus, errorThrown) {
 				toastr.error(errorThrown);
 				toastr.error(textStatus);
 			},
 			success: function() {
-				toastr.success('Appointment created successfully.');
-				window.location.replace('/consultations/');
+				toastr.success('Scheduling options saved successfully.');
+				window.location.replace('/consultations/' + consultation_id + '/book/calendar');
 			}
 		});
 		

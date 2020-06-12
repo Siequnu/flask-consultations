@@ -16,8 +16,7 @@
 
 <script>
   // Define variables that are used by the appointments JS library
-  var current_user_id = '{{ current_user.id }}';
-  var student_id = '{{ student.id }}';
+  var consultation_id = '{{ consultation.id }}';
 </script>
 {% endblock templateScripts %}
 
@@ -51,7 +50,7 @@
             <div class="bookings">
               <!-- The bookings will be inserted here by the JS -->
             </div>
-            <a id="submit-all" class="btn btn-success" href="#" role="button">Create consultation <i class="fa fa-chevron-right"></i></a>
+            <a id="submit-all" class="btn btn-success" href="#" role="button">Add time options<i class="fa fa-chevron-right"></i></a>
         </div>
     </div>
   </div>

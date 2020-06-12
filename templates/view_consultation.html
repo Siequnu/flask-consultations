@@ -4,7 +4,7 @@
 <div class="container">
   <div class="row">
     <div class="col-md-6 col-lg-12">
-      <h1><i class="fa fa-users"></i> Consultation report</h1>
+      <h1><i class="fa fa-users"></i> Consultation with {{student.username}}</h1>
     </div>
   </div>
 </div>
@@ -23,6 +23,11 @@
     <i class="fa fa-file-upload">
     </i> Upload prereading file
   </a>
+  <a href="{{url_for('consultations.view_scheduling_options', consultation_id = consultation.id)}}"
+    class="btn btn-outline-primary btn-sm" role="button">
+    <i class="fa fa-calendar-plus">
+    </i> Schedule an appointment time
+  </a>
   <a href="{{url_for('consultations.delete_consultation', consultation_id = consultation.id)}}"
     class="btn btn-outline-danger btn-sm float-right" role="button">
     <i class="fa fa-trash-alt">
@@ -35,12 +40,14 @@
       <div class="container">
         <div class="row">
           <div class="col-2 text-center">
+            {% if consultation.date %}
             <h1 class="display-4">
               <span class="badge badge-secondary">{{consultation['date'].strftime('%d')}}
               </span>
             </h1>
             <h2>{{consultation['date'].strftime('%b')|upper}}
             </h2>
+            {% endif %}
           </div>
           <div class="col-10">
             <h3 class="text">
@@ -50,8 +57,12 @@
             <ul class="list-inline">
               <li class="list-inline-item">
                 <i class="fa fa-calendar" aria-hidden="true">
-                </i> {{consultation['date'].strftime('%A')}}, {{consultation['humanized_date']}}
-
+                </i> 
+                {% if consultation.date %}
+                  {{consultation['date'].strftime('%A')}}, {{consultation['humanized_date']}}
+                {% else %}
+                  Please confirm a time slot
+                {% endif %}
               </li>
             </ul>
             <ul class="list-inline">
@@ -71,9 +82,9 @@
                 {% endif %}
               </li>
               {% endfor %}
-            </ul>
-            <em>{{consultation.description}}
-            </em>
+              </ul>
+              <em>{{consultation.description}}
+              </em>
           </div>
         </div>
       </div>
@@ -138,12 +149,13 @@
             <ul class="list-group">
               {% for report_file in report.report_files %}
               <li class="list-group-item"><i class="fa fa-book-open" aria-hidden="true"></i>
-                <a href="{{ url_for('consultations.download_report_file', report_file_id = report_file.id)}}">{{report_file.original_filename}}</a>
+                <a
+                  href="{{ url_for('consultations.download_report_file', report_file_id = report_file.id)}}">{{report_file.original_filename}}</a>
                 <a href="{{url_for('consultations.delete_report_file', consultation_id = consultation.id, report_file_id = report_file.id)}}"
-                class="btn btn-outline-warning btn-sm float-right" role="button">
-                <i class="fa fa-trash-alt">
-                </i>
-              </a>
+                  class="btn btn-outline-warning btn-sm float-right" role="button">
+                  <i class="fa fa-trash-alt">
+                  </i>
+                </a>
               </li>
               {% endfor %}
             </ul>

@@ -4,8 +4,9 @@ from datetime import datetime
 from app import db
 
 from app.models import User
-
 import app.files
+
+import arrow
 
 class Consultation (db.Model):
 	__table_args__ = {'sqlite_autoincrement': True}
@@ -24,17 +25,17 @@ class Consultation (db.Model):
 	def delete (self):
 		db.session.delete (self)
 		db.session.commit ()
+
+	def save (self):
+		db.session.add (self)
+		db.session.flush () 
+		db.session.commit ()
 	
 	def save_consultation_details (self, title, description):
 		self.title = title
 		self.description = description
 		db.session.commit ()
 
-	def update_scheduling_option (self, ConsultationSchedulingOption):
-		self.date = ConsultationSchedulingOption.date
-		self.start_time = ConsultationSchedulingOption.start_time
-		self.end_time = ConsultationSchedulingOption.end_time
-		db.session.commit()
 
 class ConsultationSchedulingOption (db.Model):
 	__table_args__ = {'sqlite_autoincrement': True}
@@ -52,10 +53,15 @@ class ConsultationSchedulingOption (db.Model):
 		db.session.delete (self)
 		db.session.commit ()
 	
-	def save_consultation_details (self, title, description):
-		self.title = title
-		self.description = description
-		db.session.commit ()
+	def set_as_consultation_schedule (self):
+		consultation = Consultation.query.get (self.consultation_id)
+		if consultation is None: 
+			return False
+		consultation.date = self.date
+		consultation.start_time = self.start_time
+		consultation.end_time = self.end_time
+		db.session.commit()
+		return True
 
 
 class ConsultationPrereadingFile (db.Model):
@@ -153,10 +159,12 @@ def new_report_file (file, consultation_report_id):
 def delete_consultation_from_id (consultation_id):
 	consultation = Consultation.query.get(consultation_id)
 	if consultation is not None:
+		# Delete any pre-reading files
 		prereading_files = ConsultationPrereadingFile.query.filter_by(consultation_id = consultation.id).all()
 		for prereading_file in prereading_files:
 			prereading_file.delete ()
 
+		# Delete any reports, after deleting any uploaded report files
 		consultation_reports = ConsultationReport.query.filter_by(consultation_id = consultation.id).all()
 		for report in consultation_reports:
 			report_files = ConsultationReportFile.query.filter_by(consultation_report_id = report.id).all()
@@ -165,7 +173,21 @@ def delete_consultation_from_id (consultation_id):
 			
 			report.delete()
 		
+		# Delete any consultation schedules
+		consultation_schedules = ConsultationSchedulingOption.query.filter_by(consultation_id = consultation.id).all()
+		for schedule in consultation_schedules:
+			schedule.delete ()
+		
 		consultation.delete()
 		return True
 	else:
 		return False
+
+def get_scheduling_options (consultation_id):
+	scheduling_options = ConsultationSchedulingOption.query.filter_by(consultation_id = consultation_id).all()
+	scheduling_options_array = []
+	for option in scheduling_options:
+		option_dict = option.__dict__
+		option_dict['humanized_date'] = arrow.get(option_dict['date']).humanize()
+		scheduling_options_array.append(option_dict)
+	return scheduling_options_array

@@ -1,0 +1,86 @@
+{% extends "header.html" %} {% block app_content %}
+{% from 'bootstrap/form.html' import render_form %}
+
+<br>
+<div class="container">
+  <div class="row">
+    <div class="col-md-12">
+      <h1><i class="fa fa-calendar-plus"></i> Schedule a consultation with {{student.username}}</h1>
+      <hr>
+      <br>
+      <h6>Select a consultation time here, or add a new consultation option.</h6>
+      <br>
+      <a href="{{url_for('consultations.view_consultation', consultation_id = consultation.id)}}"
+      class="btn btn-outline-secondary btn-lg" role="button">
+      <i class="fa fa-chevron-left">
+      </i> Back to the consultation
+    </a>
+    </div>
+  </div>
+
+  <br>
+
+  <div class="row text-center">
+    <div class="col">
+      <div class="counter">
+        <i class="fa fa-clock fa-2x"></i>
+        <h2 class="timer count-title count-number">Scheduling options</h2>
+        <br>
+        <div class="card-columns">
+          {% for option in scheduling_options %}
+          <a href="{{ url_for ('consultations.book_consultation_save_time', consultation_scheduling_option_id = option.id) }}">
+          <div class="card bg-light mb-3">
+            <div class="card-body">
+              <div class="container">
+                <div class="row">
+                  <div class="col-12 text-center">
+                    <h1 class="display-4">
+                      <span class="badge badge-secondary">{{option.date.strftime('%d')}}
+                      </span>
+                    </h1>
+                    <h2>{{option.date.strftime('%b')|upper}}
+                    </h2>
+                    <h3 class="text">
+                      <strong>{{option.start_time.strftime('%H:%M')}} - {{option.end_time.strftime('%H:%M')}}
+                      </strong>
+                    </h3>
+                    <ul class="list-inline">
+                      <li class="list-inline-item">
+                        <i class="fa fa-calendar" aria-hidden="true">
+                        </i>
+                        {{option.date.strftime('%A')}}, {{option.humanized_date}}
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </a>
+          {% endfor %}
+          <!-- Add a card that looks the same that has a link to add a new schedule-->
+          <div class="card bg-light mb-3">
+            <div class="card-body">
+              <div class="container">
+                <div class="row">
+                  <div class="col-12 text-center">
+                    <a href="{{url_for('consultations.book_consultation_set_time', consultation_id = consultation.id)}}"
+                      class="btn btn-outline-success btn-xl" role="button">
+                      <i class="fa fa-calendar-plus">
+                      </i> Add more scheduling options
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+{% endblock %}

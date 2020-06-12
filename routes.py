@@ -4,7 +4,7 @@ from flask_login import current_user, login_required
 from . import bp, models
 from .forms import ConsultationTimeForm, ConsultationDetailsForm, ConsultationReportForm
 
-from .models import Consultation, ConsultationPrereadingFile, ConsultationReport, ConsultationReportFile
+from .models import Consultation, ConsultationPrereadingFile, ConsultationReport, ConsultationReportFile, ConsultationSchedulingOption
 import app.models
 from app.models import User
 
@@ -82,18 +82,86 @@ def book_consultation_find_student():
 		students = User.query.filter_by(is_admin=False).all()
 		return render_template('search_student.html', students=students)
 
-
-# Book a consultation
-@bp.route("/book/<student_id>/calendar")
+# Search for a student
+@bp.route("/book/<student_id>")
 @login_required
-def book_consultation_set_time(student_id):
+def book_new_consultation(student_id):
 	# View a list of consultations
 	if current_user.is_authenticated and app.models.is_admin(current_user.username):
-		student = User.query.get(student_id)
+		student = User.query.filter_by(id = student_id).first ()
 		if student is None:
-			abort(404)
+			flash ('Could not locate this student.', 'error')
+			return redirect(url_for('consultations.view_consultations'))
+		else:
+			new_consultation = Consultation (
+				teacher_id = current_user.id,
+				student_id = student_id
+			)
+			new_consultation.save ()
+			
+		return redirect(url_for('consultations.save_consultation_details', consultation_id = new_consultation.id))
+
+
+# Book a consultation
+@bp.route("/book/schedule/<consultation_id>/")
+@login_required
+def book_consultation_set_time(consultation_id):
+	# View a list of consultations
+	if current_user.is_authenticated and app.models.is_admin(current_user.username):
+		consultation = Consultation.query.get (consultation_id)
+		if consultation is None:
+			flash ('Could not find the consultation.', 'error')
+			return redirect(url_for('consultations.view_consultations'))
+		student = User.query.get(consultation.student_id)
+		if student is None:
+			flash ('Could not locate this student.', 'error')
+			return redirect(url_for('consultations.view_consultations'))
 		form = ConsultationTimeForm()
-		return render_template('book_time.html', form=form, student=student)
+		return render_template(
+			'book_time.html', 
+			form = form, 
+			student = student, 
+			consultation = consultation)
+
+
+# Book a consultation
+@bp.route("/book/schedule/set/<consultation_scheduling_option_id>/")
+@login_required
+def book_consultation_save_time(consultation_scheduling_option_id):
+	# View a list of consultations
+	if current_user.is_authenticated and app.models.is_admin(current_user.username):
+		scheduling_option = ConsultationSchedulingOption.query.get (consultation_scheduling_option_id)
+		if scheduling_option is None:
+			flash ('Could not find the scheduling option.', 'error')
+			return redirect(url_for('consultations.view_consultations'))
+		if scheduling_option.set_as_consultation_schedule () == True:
+			flash ('Time slot saved.', 'success')
+			return redirect(url_for('consultations.view_consultation', consultation_id = scheduling_option.consultation_id))
+		else: 
+			flash ('An error occured while changing the time slot.', 'error')
+			return redirect(url_for('consultations.view_consultations'))
+
+
+# View scheduling options
+@bp.route("/<consultation_id>/book/calendar")
+@login_required
+def view_scheduling_options(consultation_id):
+	# View a list of consultations
+	if current_user.is_authenticated and app.models.is_admin(current_user.username):
+		consultation = Consultation.query.get (consultation_id)
+		if consultation is None:
+			flash ('Could not find the consultation.', 'error')
+			return redirect(url_for('consultations.view_consultations'))
+		student = User.query.get(consultation.student_id)
+		if student is None:
+			flash ('Could not locate this student.', 'error')
+			return redirect(url_for('consultations.view_consultations'))
+		scheduling_options = models.get_scheduling_options (consultation_id)
+		return render_template(
+			'schedule_appointment.html', 
+			scheduling_options = scheduling_options,
+			student = student, 
+			consultation = consultation)
 
 
 # Redirect after booking consultation
