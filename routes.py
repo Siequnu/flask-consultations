@@ -99,13 +99,16 @@ def book_new_consultation(student_id):
 			)
 			new_consultation.save ()
 			
-		return redirect(url_for('consultations.save_consultation_details', consultation_id = new_consultation.id))
+		return redirect(url_for(
+			'consultations.save_consultation_details', 
+			consultation_id = new_consultation.id
+			))
 
 
 # Book a consultation
 @bp.route("/book/schedule/<consultation_id>/")
 @login_required
-def book_consultation_set_time(consultation_id):
+def book_consultation_add_time(consultation_id):
 	# View a list of consultations
 	if current_user.is_authenticated and app.models.is_admin(current_user.username):
 		consultation = Consultation.query.get (consultation_id)
@@ -127,7 +130,7 @@ def book_consultation_set_time(consultation_id):
 # Book a consultation
 @bp.route("/book/schedule/set/<consultation_scheduling_option_id>/")
 @login_required
-def book_consultation_save_time(consultation_scheduling_option_id):
+def book_consultation_set_time(consultation_scheduling_option_id):
 	# View a list of consultations
 	if current_user.is_authenticated and app.models.is_admin(current_user.username):
 		scheduling_option = ConsultationSchedulingOption.query.get (consultation_scheduling_option_id)
@@ -206,7 +209,11 @@ def save_consultation_details(consultation_id):
 					form.title.data, form.description.data)
 				flash('Saved the consultation details', 'success')
 				return redirect(url_for('consultations.view_consultation', consultation_id=consultation_id))
-			return render_template('save_consultation_details.html', title='Save consultation details', form=form, consultation_id=consultation_id)
+			return render_template(
+				'save_consultation_details.html', 
+				title='Save consultation details', 
+				form=form, 
+				consultation_id = consultation_id)
 		abort (404)
 	abort(403)
 

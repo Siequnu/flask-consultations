@@ -28,7 +28,7 @@
         <br>
         <div class="card-columns">
           {% for option in scheduling_options %}
-          <a href="{{ url_for ('consultations.book_consultation_save_time', consultation_scheduling_option_id = option.id) }}">
+          <a href="{{ url_for ('consultations.book_consultation_set_time', consultation_scheduling_option_id = option.id) }}">
           <div class="card bg-light mb-3">
             <div class="card-body">
               <div class="container">
@@ -64,7 +64,7 @@
               <div class="container">
                 <div class="row">
                   <div class="col-12 text-center">
-                    <a href="{{url_for('consultations.book_consultation_set_time', consultation_id = consultation.id)}}"
+                    <a href="{{url_for('consultations.book_consultation_add_time', consultation_id = consultation.id)}}"
                       class="btn btn-outline-success btn-xl" role="button">
                       <i class="fa fa-calendar-plus">
                       </i> Add more scheduling options
