@@ -82,7 +82,7 @@ def book_consultation_find_student():
 		students = User.query.filter_by(is_admin=False).all()
 		return render_template('search_student.html', students=students)
 
-# Search for a student
+# Create a new consultation, and redirect to the details edit page
 @bp.route("/book/<student_id>")
 @login_required
 def book_new_consultation(student_id):
@@ -105,7 +105,7 @@ def book_new_consultation(student_id):
 			))
 
 
-# Book a consultation
+# Display a page to add time slots to a consultation
 @bp.route("/book/schedule/<consultation_id>/")
 @login_required
 def book_consultation_add_time(consultation_id):
@@ -127,7 +127,7 @@ def book_consultation_add_time(consultation_id):
 			consultation = consultation)
 
 
-# Book a consultation
+# Set the time for a consultation
 @bp.route("/book/schedule/set/<consultation_scheduling_option_id>/")
 @login_required
 def book_consultation_set_time(consultation_scheduling_option_id):
@@ -165,13 +165,6 @@ def view_scheduling_options(consultation_id):
 			scheduling_options = scheduling_options,
 			student = student, 
 			consultation = consultation)
-
-
-# Redirect after booking consultation
-@bp.route("/book/<student_id>/redirect")
-@login_required
-def book_consultation_redirect(student_id):
-	return redirect(url_for('consultations.view_consultations'))
 
 
 # Delete a consultation from ID
@@ -305,7 +298,7 @@ def save_consultation_report(consultation_id, consultation_report_id = False):
 					report = form.report.data,
 					create_new = create_new
 					)
-				flash('Saved the consultation details', 'success')
+				flash('Added the consultation report.', 'success')
 				return redirect(url_for('consultations.view_consultation', consultation_id=consultation_id))
 			return render_template('save_consultation_details.html', title='Save report details', form=form, consultation_id=consultation_id)
 		abort (404)
