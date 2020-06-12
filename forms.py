@@ -19,3 +19,11 @@ class ConsultationDetailsForm(FlaskForm):
     description = StringField('Consultation description:', validators=[
                               DataRequired(), Length(max=2000)])
     submit = SubmitField('Save consultation details')
+
+
+class ConsultationReportForm(FlaskForm):
+    summary = StringField('Summary of the situation:', validators=[
+        DataRequired(), Length(max=250)])
+    report = TextAreaField('Consultation report:', validators=[
+        DataRequired(), Length(max=2000)])
+    submit = SubmitField('Save consultation report')

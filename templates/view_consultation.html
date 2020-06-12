@@ -3,16 +3,16 @@
 <br>
 <div class="container">
   <div class="row">
-    <div class="col-md-6">
+    <div class="col-md-6 col-lg-12">
       <h1><i class="fa fa-users"></i> Consultation report</h1>
     </div>
   </div>
 </div>
 <br>
-{% if current_user.is_admin %}
 
-{% endif %}
+
 <div class="container">
+  {% if current_user.is_admin %}
   <a href="{{url_for('consultations.save_consultation_details', consultation_id = consultation.id)}}"
     class="btn btn-outline-secondary btn-sm" role="button">
     <i class="fa fa-edit">
@@ -26,9 +26,10 @@
   <a href="{{url_for('consultations.delete_consultation', consultation_id = consultation.id)}}"
     class="btn btn-outline-danger btn-sm float-right" role="button">
     <i class="fa fa-trash-alt">
-    </i> Delete this appointment
+    </i> Delete this consultation
   </a>
   <br><br>
+  {% endif %}
   <div class="card bg-light mb-3">
     <div class="card-body">
       <div class="container">
@@ -70,9 +71,6 @@
                 {% endif %}
               </li>
               {% endfor %}
-              </ul>
-
-
             </ul>
             <em>{{consultation.description}}
             </em>
@@ -85,38 +83,69 @@
 
 
 <div class="container">
+  {% if current_user.is_admin %}
+  <a href="{{url_for('consultations.save_consultation_report', consultation_id = consultation.id)}}"
+    class="btn btn-success" role="button">
+    <i class="fa fa-plus">
+    </i>
+    Add a report
+  </a>
+  <br><br>
+  {% endif %}
+  {% for report in consultation_reports %}
   <div class="card bg-light mb-3">
     <div class="card-body">
       <div class="container">
         <div class="row">
-          <div class="col-10">
+          <div class="col-4">
             <h3 class="text">
-              <strong>Report
+              <strong>Report by {{report.user.username}}
               </strong>
             </h3>
+          </div>
+          <div class="col-8">
+            <a href="{{ url_for('consultations.delete_consultation_report', consultation_report_id = report.id, consultation_id = consultation.id) }} "
+              class="btn btn-outline-warning btn-sm float-right" role="button">
+              <i class="fa fa-trash-alt">
+              </i>
+              Delete this report
+            </a>
+            <a href="{{ url_for('consultations.save_consultation_report', consultation_report_id = report.id, consultation_id = consultation.id) }}"
+              class="btn btn-outline-primary btn-sm" role="button">
+              <i class="fa fa-edit">
+              </i>
+              Edit this report
+            </a>
+            <a href="{{ url_for('consultations.upload_report_file', consultation_report_id = report.id, consultation_id = consultation.id) }}"
+              class="btn btn-outline-secondary btn-sm" role="button">
+              <i class="fa fa-file-upload">
+              </i>
+              Upload report documents
+            </a>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-10">
             <ul class="list-inline">
               <li class="list-inline-item">
                 <i class="fa fa-bullseye" aria-hidden="true">
-                </i> 3 main targets
+                </i> {{report.summary}}
               </li>
-
-
-
             </ul>
-            <em>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
-              dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex
-              ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
-              fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt
-              mollit anim id est laborum.
+            <em>{{report.report}}
             </em>
             <br><br>
             <ul class="list-group">
-              <li class="list-group-item"><i class="fa fa-book-open" aria-hidden="true"> Reading 1: Lorem ipsum</i></li>
-              <li class="list-group-item"><i class="fa fa-book-open" aria-hidden="true"> Reading 2: Tempor
-                  incididunt</i></li>
-              <li class="list-group-item"><i class="fa fa-book-open" aria-hidden="true"> Reading 3: Labore et dolore</i>
+              {% for report_file in report.report_files %}
+              <li class="list-group-item"><i class="fa fa-book-open" aria-hidden="true"></i>
+                <a href="{{ url_for('consultations.download_report_file', report_file_id = report_file.id)}}">{{report_file.original_filename}}</a>
+                <a href="{{url_for('consultations.delete_report_file', consultation_id = consultation.id, report_file_id = report_file.id)}}"
+                class="btn btn-outline-warning btn-sm float-right" role="button">
+                <i class="fa fa-trash-alt">
+                </i>
+              </a>
               </li>
-              <li class="list-group-item"><i class="fa fa-book-open" aria-hidden="true"> Annex 1: Sed do </i></li>
+              {% endfor %}
             </ul>
 
             <br><br>
@@ -129,9 +158,8 @@
       </div>
     </div>
   </div>
-
+  {% endfor %}
 </div>
-
 
 
 {% endblock %}

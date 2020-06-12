@@ -1,0 +1,24 @@
+
+  {% extends "header.html" %}
+  
+{% block app_content %}
+<div class="container">
+<br>
+<div class="card bg-light mb-3" style="max-width: 40rem;">
+  <div class="card-body">
+
+    <h1><i class="fa fa-file-upload"></i> Upload report file</h1>
+    <hr>
+  <p>Please select the files you want to attach to the report.</p>
+  {{ dropzone.create(action=url_for('consultations.upload_report_file', consultation_report_id = consultation_report.id)) }}
+  {{ dropzone.config() }}   
+  <a href="{{url_for('consultations.view_consultation', consultation_id = consultation.id)}}" class="btn btn-success" role="button">
+    <i class="fa fa-check-circle"></i> Done
+    </a>
+</div>
+
+</div>
+
+
+</div>
+{% endblock %}

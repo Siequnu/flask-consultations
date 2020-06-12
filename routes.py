@@ -2,9 +2,9 @@ from flask import render_template, flash, redirect, url_for, request, abort, cur
 from flask_login import current_user, login_required
 
 from . import bp, models
-from .forms import ConsultationTimeForm, ConsultationDetailsForm
+from .forms import ConsultationTimeForm, ConsultationDetailsForm, ConsultationReportForm
 
-from .models import Consultation, ConsultationPrereadingFile
+from .models import Consultation, ConsultationPrereadingFile, ConsultationReport, ConsultationReportFile
 import app.models
 from app.models import User
 
@@ -62,9 +62,15 @@ def view_consultation(consultation_id):
 		# Append other information
 		student = User.query.get(consultation.student_id)
 		prereading_files = ConsultationPrereadingFile.query.filter_by(
-			consultation_id=consultation.id).all()
+			consultation_id = consultation.id).all()
+		consultation_reports = models.get_consultation_reports_with_files (consultation_id)
 
-		return render_template('view_consultation.html', consultation=consultation, student=student, prereading_files=prereading_files)
+		return render_template(
+			'view_consultation.html', 
+			consultation=consultation, 
+			student=student, 
+			prereading_files=prereading_files,
+			consultation_reports = consultation_reports)
 
 
 # Search for a student
@@ -187,3 +193,121 @@ def delete_prereading_file(consultation_id, prereading_file_id):
 	return redirect(url_for('consultations.view_consultation', consultation_id=consultation_id))
 
 
+
+# Add or edit consultation details
+@bp.route('/<consultation_id>/report/add', methods=['GET', 'POST'])
+@bp.route('/<consultation_id>/report/view/<consultation_report_id>', methods=['GET', 'POST'])
+@login_required
+def save_consultation_report(consultation_id, consultation_report_id = False):
+	if app.models.is_admin(current_user.username):
+		
+		consultation = Consultation.query.get(consultation_id)
+		if consultation is not None:
+			
+			# Define the consultation form
+			form = ConsultationReportForm()
+			
+			# If we are editing the file, redefine the form and fill it with object
+			if consultation_report_id:
+				create_new = False
+
+				# Get the existing report
+				consultation_report = ConsultationReport.query.get(consultation_report_id)
+				if consultation_report is not None: 
+					form = ConsultationReportForm(obj=consultation_report)
+			else:
+
+				# Initialise a new report
+				consultation_report = ConsultationReport()
+				create_new = True	
+
+			# Save the details if submitting form
+			if form.validate_on_submit():
+				consultation_report.save_report_details(
+					consultation_id = consultation.id,
+					teacher_id = current_user.id,
+					summary = form.summary.data,
+					report = form.report.data,
+					create_new = create_new
+					)
+				flash('Saved the consultation details', 'success')
+				return redirect(url_for('consultations.view_consultation', consultation_id=consultation_id))
+			return render_template('save_consultation_details.html', title='Save report details', form=form, consultation_id=consultation_id)
+		abort (404)
+	abort(403)
+
+# Delete a consultation report
+@bp.route('/<consultation_id>/report/<consultation_report_id>/delete', methods=['GET', 'POST'])
+@login_required
+def delete_consultation_report(consultation_id, consultation_report_id):
+	consultation_report = ConsultationReport.query.get(consultation_report_id)
+	if consultation_report is not None:
+		consultation_report.delete()
+	flash('Deleted the report successfully', 'success')
+	return redirect(url_for('consultations.view_consultation', consultation_id=consultation_id))
+
+
+# Add a report file
+@bp.route('/<consultation_report_id>/report/file/add', methods=['GET', 'POST'])
+@login_required
+def upload_report_file(consultation_report_id):
+	# Get the report
+	consultation_report = ConsultationReport.query.get(consultation_report_id)
+	if consultation_report is None:
+		flash('This report could not be found.', 'error')
+		return redirect(url_for('consultations.view_consultations'))
+
+	# Load the consultation
+	consultation = Consultation.query.get(consultation_report.consultation_id)
+	if consultation is None:
+		flash('This consultation could not be found.', 'error')
+		return redirect(url_for('consultations.view_consultations'))
+
+	# Upload files (used by dropzone)
+	#¡# Can this be wrapped behind admin privileges?
+	if request.method == 'POST':
+		file_obj = request.files
+		for f in file_obj:
+			file = request.files.get(f)
+			models.new_report_file(file, consultation_report_id)
+
+	# IF admin, return the upload form
+	if current_user.is_authenticated and app.models.is_admin(current_user.username):
+		return render_template(
+			'upload_report_files.html', 
+			consultation=consultation, 
+			consultation_report = consultation_report
+		)
+	else:
+		abort(403)
+
+
+# Route to download a prereading file
+@bp.route('/download/report/file/<report_file_id>')
+@login_required
+def download_report_file(report_file_id):
+
+	# Get the prereading file and consultation	
+	report_file = ConsultationReportFile.query.get(report_file_id)
+	if report_file is not None:
+		report = ConsultationReport.query.get(report_file.consultation_report_id)
+		consultation = Consultation.query.get(report.consultation_id)
+	
+		# Only admin or consultation file receiver can access this file 
+		if app.models.is_admin(current_user.username) or consultation.student_id == current_user.id:
+			return send_from_directory(
+				filename = report_file.filename,
+				directory=current_app.config['UPLOAD_FOLDER'],
+				as_attachment = True,
+				attachment_filename = report_file.original_filename)
+	abort (403)
+
+# Delete a report file
+@bp.route('/<consultation_id>/file/delete/<report_file_id>', methods=['GET', 'POST'])
+@login_required
+def delete_report_file(consultation_id, report_file_id):
+	report = ConsultationReportFile.query.get(report_file_id)
+	if report is not None:
+		report.delete()
+	flash('Deleted the file successfully', 'success')
+	return redirect(url_for('consultations.view_consultation', consultation_id=consultation_id))

@@ -38,6 +38,9 @@ $(':submit').click (function (event) {
 	);
 	event.preventDefault();
 	
+	// Change the add time slot button text
+	$('#submit').prop('value', 'Add another time slot');
+
 	// If there is more than one time set, allow the user to proceed
 	var numItems = $('.booking').length;
 	if (numItems == 1) {
