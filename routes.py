@@ -38,6 +38,7 @@ def view_consultations():
 				consultation.student_id)
 			consultation_dict['humanized_date'] = arrow.get(
 				consultation_dict['date']).humanize()
+			consultation_dict['scheduling_options'] = consultation.get_scheduling_options ()
 			consultations_array.append(consultation_dict)
 		return render_template('view_consultations.html', consultations=consultations_array)
 
@@ -159,7 +160,7 @@ def view_scheduling_options(consultation_id):
 		if student is None:
 			flash ('Could not locate this student.', 'error')
 			return redirect(url_for('consultations.view_consultations'))
-		scheduling_options = models.get_scheduling_options (consultation_id)
+		scheduling_options = consultation.get_scheduling_options ()
 		return render_template(
 			'schedule_appointment.html', 
 			scheduling_options = scheduling_options,

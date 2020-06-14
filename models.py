@@ -36,6 +36,15 @@ class Consultation (db.Model):
 		self.description = description
 		db.session.commit ()
 
+	def get_scheduling_options (self):
+		scheduling_options = ConsultationSchedulingOption.query.filter_by(consultation_id = self.id).all()
+		scheduling_options_array = []
+		for option in scheduling_options:
+			option_dict = option.__dict__
+			option_dict['humanized_date'] = arrow.get(option_dict['date']).humanize()
+			scheduling_options_array.append(option_dict)
+		return scheduling_options_array
+
 
 class ConsultationSchedulingOption (db.Model):
 	__table_args__ = {'sqlite_autoincrement': True}
@@ -182,12 +191,3 @@ def delete_consultation_from_id (consultation_id):
 		return True
 	else:
 		return False
-
-def get_scheduling_options (consultation_id):
-	scheduling_options = ConsultationSchedulingOption.query.filter_by(consultation_id = consultation_id).all()
-	scheduling_options_array = []
-	for option in scheduling_options:
-		option_dict = option.__dict__
-		option_dict['humanized_date'] = arrow.get(option_dict['date']).humanize()
-		scheduling_options_array.append(option_dict)
-	return scheduling_options_array
