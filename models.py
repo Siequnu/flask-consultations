@@ -12,8 +12,8 @@ class Consultation (db.Model):
 	__table_args__ = {'sqlite_autoincrement': True}
 	id = db.Column(db.Integer, primary_key=True)
 	date = db.Column(db.Date)
-	start_time = db.Column(db.Time)
-	end_time = db.Column(db.Time)
+	start_time = db.Column(db.DateTime)
+	end_time = db.Column(db.DateTime)
 	teacher_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 	student_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 	title = db.Column(db.String(300), default='Add a consultation title')
@@ -51,9 +51,8 @@ class ConsultationSchedulingOption (db.Model):
 	id = db.Column(db.Integer, primary_key=True)
 	consultation_id = db.Column(db.Integer, db.ForeignKey('consultation.id'))
 	date = db.Column(db.Date)
-	start_time = db.Column(db.Time)
-	end_time = db.Column(db.Time)
-	
+	start_time = db.Column(db.DateTime)
+	end_time = db.Column(db.DateTime)
 	
 	def __repr__(self):
 		return '<Consultation scheduling option {}>'.format(self.id)

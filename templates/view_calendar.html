@@ -1,0 +1,79 @@
+{% extends "header.html" %} {% block app_content %}
+{% from 'bootstrap/form.html' import render_form %}
+
+{% block templateScripts %}
+<!-- Load the FullCalendar library as part of the main template-->
+<link href='/static/js/lib/fullcalendar-4.4.2/packages/core/main.css' rel='stylesheet' />
+<link href='/static/js/lib/fullcalendar-4.4.2/packages/daygrid/main.css' rel='stylesheet' />
+<link href='/static/js/lib/fullcalendar-4.4.2/packages/timegrid/main.css' rel='stylesheet' />
+
+<script src='/static/js/lib/fullcalendar-4.4.2/packages/core/main.js'></script>
+<script src='/static/js/lib/fullcalendar-4.4.2/packages/daygrid/main.js'></script>
+<script src='/static/js/lib/fullcalendar-4.4.2/packages/timegrid/main.js'></script>
+{% endblock templateScripts %}
+
+
+<script>
+  // Initialise the FullCalendar object
+  document.addEventListener('DOMContentLoaded', function () {
+    var calendarEl = document.getElementById('calendar');
+
+    var calendar = new FullCalendar.Calendar(calendarEl, {
+      // Add events by iterating through jinja variable
+      events: [
+        {% for consultation in consultations %}
+          {
+        'title': '{{consultation.title}}',
+        'start': '{{consultation.start_time}}',
+        'end': '{{consultation.end_time}}',
+        'allDay': false,
+        'url': '/consultations/view/' + {{ consultation.id }}
+          },
+    {% endfor %}
+      ],
+    header: {
+    left: 'timeGridWeek dayGridMonth'
+  },
+    plugins: ['dayGrid', 'timeGrid'],
+    minTime: '07:00:00',
+    maxTime: '21:00:00',
+    firstDay: 1,
+    local: 'GMT+07:00',
+    timeZone: 'local',
+    defaultView: 'timeGridWeek',
+    nowIndicator: true,
+
+    eventClick: function (info) {
+      window.location.replace('/consultations/viebook/calendar');
+    }
+    });
+
+  calendar.render();
+  });
+
+</script>
+
+<br>
+<div class="container">
+  <div class="row">
+    <div class="col-md-12">
+      <h1><i class="fa fa-calendar-plus"></i> Your calendar</h1>
+      <hr>
+      <h6>You can add as many time slot options as you like. </h6>
+      <h6>When you are done, press Create consultation to continue.</h6>
+    </div>
+  </div>
+
+  <br>
+
+  <div class="row">
+    <div class="col">
+      <div id='calendar'></div>
+    </div>
+  </div>
+</div>
+
+
+
+
+{% endblock %}

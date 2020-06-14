@@ -52,9 +52,9 @@ $(':submit').click (function (event) {
 $('#submit-all').click (function () {
 	
  $(".booking").each(function(){
-	var datefield = $(this).find('.date').text();
-	var start_time = $(this).find('.start_time').text();
-	var end_time = $(this).find('.end_time').text();
+	var datefield = $(this).find('.date').text().trim();
+	var start_time = $(this).find('.start_time').text().trim();
+	var end_time = $(this).find('.end_time').text().trim();
 	
 	// Send data via AJAX
 		$.ajax({

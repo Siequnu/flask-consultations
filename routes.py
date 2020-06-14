@@ -8,8 +8,7 @@ from .models import Consultation, ConsultationPrereadingFile, ConsultationReport
 import app.models
 from app.models import User
 
-import os
-import arrow
+import os, arrow, json
 
 
 # Render this blueprint's javascript
@@ -28,6 +27,7 @@ def view_consultations():
 	if current_user.is_authenticated and app.models.is_admin(current_user.username):
 
 		# Get all consultations
+		#¡# Filter by teacher username?
 		consultations = Consultation.query.all()
 
 		# For each consultation, append additional information
@@ -42,6 +42,14 @@ def view_consultations():
 			consultations_array.append(consultation_dict)
 		return render_template('view_consultations.html', consultations=consultations_array)
 
+
+# Consultations home page
+@bp.route("/calendar")
+@login_required
+def view_calendar():
+	if current_user.is_authenticated and app.models.is_admin(current_user.username):
+		consultations = Consultation.query.filter(Consultation.date.isnot(None)).all()
+		return render_template('view_calendar.html', consultations = consultations)
 
 # View a single consultation
 @bp.route("/view/<int:consultation_id>")
