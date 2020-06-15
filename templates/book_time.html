@@ -24,10 +24,10 @@
 <div class="container">
   <div class="row">
     <div class="col-md-12">
-      <h1><i class="fa fa-calendar-plus"></i> Schedule a consultation with {{student.username}}</h1>
+      <h1><i class="fa fa-calendar-plus"></i> Schedule a consultation with {{student.username if current_user.is_admin == True else teacher.username}}</h1>
       <hr>
       <h6>You can add as many time slot options as you like. </h6>
-      <h6>When you are done, press Create consultation to continue.</h6>
+      <h6>When you are done, press Add time options to continue.</h6>
     </div>
   </div>
   

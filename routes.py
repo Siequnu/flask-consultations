@@ -24,20 +24,23 @@ def js(filename):
 @bp.route("/")
 @login_required
 def view_consultations():
-	if current_user.is_authenticated and app.models.is_admin(current_user.username):
-		#¡# This should be filterd by teacher_id?
+	if app.models.is_admin(current_user.username):
 		consultations_array = models.get_consultation_info_array ()
-
-		return render_template('view_consultations.html', consultations=consultations_array)
+		#¡# This should be filtered by teacher_id?
+	else: 
+		consultations_array = models.get_consultation_info_array (student_id = current_user.id)
+	return render_template('view_consultations.html', consultations=consultations_array)
 
 
 # Consultations home page
 @bp.route("/calendar")
 @login_required
 def view_calendar():
-	if current_user.is_authenticated and app.models.is_admin(current_user.username):
+	if app.models.is_admin(current_user.username):
 		consultations = Consultation.query.filter(Consultation.date.isnot(None)).all()
-		return render_template('view_calendar.html', consultations = consultations)
+	else:
+		consultations = Consultation.query.filter(Consultation.date.isnot(None)).filter_by(student_id = current_user.id).all()
+	return render_template('view_calendar.html', consultations = consultations)
 
 # View a single consultation
 @bp.route("/view/<int:consultation_id>")
@@ -109,21 +112,27 @@ def book_new_consultation(student_id):
 @bp.route("/book/schedule/<consultation_id>/")
 @login_required
 def book_consultation_add_time(consultation_id):
-	# View a list of consultations
-	if current_user.is_authenticated and app.models.is_admin(current_user.username):
-		consultation = Consultation.query.get (consultation_id)
-		if consultation is None:
-			flash ('Could not find the consultation.', 'error')
-			return redirect(url_for('consultations.view_consultations'))
-		student = User.query.get(consultation.student_id)
-		if student is None:
-			flash ('Could not locate this student.', 'error')
-			return redirect(url_for('consultations.view_consultations'))
+	consultation = Consultation.query.get (consultation_id)
+
+	# Check if consultation and student exist 
+	if consultation is None:
+		flash ('Could not find the consultation.', 'error')
+		return redirect(url_for('consultations.view_consultations'))
+	student = User.query.get(consultation.student_id)
+	if student is None:
+		flash ('Could not locate this student.', 'error')
+		return redirect(url_for('consultations.view_consultations'))
+	teacher = User.query.get(consultation.teacher_id)
+	if teacher is None:
+		flash ('Could not locate the teacher responsible for this appointment.', 'error')
+		return redirect(url_for('consultations.view_consultations'))
+	if app.models.is_admin(current_user.username) or current_user.id == consultation.student_id:
 		form = ConsultationTimeForm()
 		return render_template(
 			'book_time.html', 
 			form = form, 
-			student = student, 
+			student = student,
+			teacher = teacher,
 			consultation = consultation)
 
 
@@ -131,12 +140,19 @@ def book_consultation_add_time(consultation_id):
 @bp.route("/book/schedule/set/<consultation_scheduling_option_id>/")
 @login_required
 def book_consultation_set_time(consultation_scheduling_option_id):
-	# View a list of consultations
-	if current_user.is_authenticated and app.models.is_admin(current_user.username):
-		scheduling_option = ConsultationSchedulingOption.query.get (consultation_scheduling_option_id)
-		if scheduling_option is None:
-			flash ('Could not find the scheduling option.', 'error')
-			return redirect(url_for('consultations.view_consultations'))
+	# Retrieve the scheduling option and the corresponding Consultation
+	scheduling_option = ConsultationSchedulingOption.query.get (consultation_scheduling_option_id)
+	if scheduling_option is None:
+		flash ('Could not find the scheduling option.', 'error')
+		return redirect(url_for('consultations.view_consultations'))
+	
+	consultation = Consultation.query.get (scheduling_option.consultation_id)
+	if consultation is None:
+		flash ('Could not find the consultation.', 'error')
+		return redirect(url_for('consultations.view_consultations'))
+
+	# Only admin or student can get past this point
+	if app.models.is_admin(current_user.username) or current_user.id == consultation.student_id:
 		if scheduling_option.set_as_consultation_schedule () == True:
 			flash ('Time slot saved.', 'success')
 			return redirect(url_for('consultations.view_consultation', consultation_id = scheduling_option.consultation_id))
@@ -160,11 +176,18 @@ def view_scheduling_options(consultation_id):
 		if student is None:
 			flash ('Could not locate this student.', 'error')
 			return redirect(url_for('consultations.view_consultations'))
+
+		teacher = User.query.get(consultation.teacher_id)
+		if teacher is None:
+			flash ('Could not locate the teacher responsible for this appointment.', 'error')
+			return redirect(url_for('consultations.view_consultations'))
+		
 		scheduling_options = consultation.get_scheduling_options ()
 		return render_template(
 			'schedule_appointment.html', 
 			scheduling_options = scheduling_options,
 			student = student, 
+			teacher = teacher,
 			consultation = consultation)
 	else: abort (403)
 
