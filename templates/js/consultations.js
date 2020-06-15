@@ -1,8 +1,10 @@
 // Hide the submit button on load
 $('#submit-all').hide();
 
-// Enable the datefield to use UI datepicker and timepicker
+// Enable the datefield to use UI datepicker
 $('#datefield').datepicker ({dateFormat: 'yy-mm-dd'});
+
+// Enable timepicker
 $('#start_time, #end_time').timepicker({
 	'timeFormat': 'H:i',
 	'minTime': '07:00am',
