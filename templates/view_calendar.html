@@ -6,8 +6,10 @@
 <link href='/static/js/lib/fullcalendar-4.4.2/packages/core/main.css' rel='stylesheet' />
 <link href='/static/js/lib/fullcalendar-4.4.2/packages/daygrid/main.css' rel='stylesheet' />
 <link href='/static/js/lib/fullcalendar-4.4.2/packages/timegrid/main.css' rel='stylesheet' />
+<link href='/static/js/lib/fullcalendar-4.4.2/packages/list/main.css' rel='stylesheet' />
 
 <script src='/static/js/lib/fullcalendar-4.4.2/packages/core/main.js'></script>
+<script src='/static/js/lib/fullcalendar-4.4.2/packages/list/main.js'></script>
 <script src='/static/js/lib/fullcalendar-4.4.2/packages/daygrid/main.js'></script>
 <script src='/static/js/lib/fullcalendar-4.4.2/packages/timegrid/main.js'></script>
 {% endblock templateScripts %}
@@ -22,19 +24,21 @@
       // Add events by iterating through jinja variable
       events: [
         {% for consultation in consultations %}
+        {% if consultation.date != None %}
           {
-        'title': '{{consultation.title}}',
+        'title': '{{consultation.student.username if current_user.is_admin else consultation.teacher.username}}: {{consultation.title}}',
         'start': '{{consultation.start_time}}',
         'end': '{{consultation.end_time}}',
         'allDay': false,
         'url': '/consultations/view/' + {{ consultation.id }}
           },
+    {% endif %}
     {% endfor %}
       ],
     header: {
-    left: 'timeGridWeek dayGridMonth'
+    left: 'timeGridWeek dayGridMonth listWeek'
   },
-    plugins: ['dayGrid', 'timeGrid'],
+    plugins: ['dayGrid', 'timeGrid', 'list'],
     minTime: '07:00:00',
     maxTime: '21:00:00',
     firstDay: 1,

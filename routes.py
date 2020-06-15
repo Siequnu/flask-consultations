@@ -25,11 +25,11 @@ def js(filename):
 @login_required
 def view_consultations():
 	if app.models.is_admin(current_user.username):
-		consultations_array = models.get_consultation_info_array ()
+		consultations = models.get_consultation_info_array ()
 		#¡# This should be filtered by teacher_id?
 	else: 
-		consultations_array = models.get_consultation_info_array (student_id = current_user.id)
-	return render_template('view_consultations.html', consultations=consultations_array)
+		consultations = models.get_consultation_info_array (student_id = current_user.id)
+	return render_template('view_consultations.html', consultations = consultations)
 
 
 # Consultations home page
@@ -37,9 +37,9 @@ def view_consultations():
 @login_required
 def view_calendar():
 	if app.models.is_admin(current_user.username):
-		consultations = Consultation.query.filter(Consultation.date.isnot(None)).all()
+		consultations = models.get_consultation_info_array ()
 	else:
-		consultations = Consultation.query.filter(Consultation.date.isnot(None)).filter_by(student_id = current_user.id).all()
+		consultations = models.get_consultation_info_array (student_id = current_user.id)
 	return render_template('view_calendar.html', consultations = consultations)
 
 # View a single consultation
