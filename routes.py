@@ -25,21 +25,9 @@ def js(filename):
 @login_required
 def view_consultations():
 	if current_user.is_authenticated and app.models.is_admin(current_user.username):
+		#¡# This should be filterd by teacher_id?
+		consultations_array = models.get_consultation_info_array ()
 
-		# Get all consultations
-		#¡# Filter by teacher username?
-		consultations = Consultation.query.all()
-
-		# For each consultation, append additional information
-		consultations_array = []
-		for consultation in consultations:
-			consultation_dict = consultation.__dict__
-			consultation_dict['student'] = User.query.get(
-				consultation.student_id)
-			consultation_dict['humanized_date'] = arrow.get(
-				consultation_dict['date']).humanize()
-			consultation_dict['scheduling_options'] = consultation.get_scheduling_options ()
-			consultations_array.append(consultation_dict)
 		return render_template('view_consultations.html', consultations=consultations_array)
 
 
@@ -55,31 +43,34 @@ def view_calendar():
 @bp.route("/view/<int:consultation_id>")
 @login_required
 def view_consultation(consultation_id):
-	# View a list of consultations
-	if current_user.is_authenticated and app.models.is_admin(current_user.username):
-
+	if current_user.is_authenticated:
+		
 		# Get the consultation
 		consultation = Consultation.query.get(consultation_id)
 		if consultation is None:
 			abort(404)
 
-		# Append humanized timestamp
-		consultation_dict = consultation.__dict__
-		consultation_dict['humanized_date'] = arrow.get(
-			consultation_dict['date']).humanize()
+		# Only the student or admin can view this page
+		if app.models.is_admin(current_user.username) or current_user.id == consultation.student_id:
+			# Append humanized timestamp
+			consultation_dict = consultation.__dict__
+			consultation_dict['humanized_date'] = arrow.get(
+				consultation_dict['date']).humanize()
 
-		# Append other information
-		student = User.query.get(consultation.student_id)
-		prereading_files = ConsultationPrereadingFile.query.filter_by(
-			consultation_id = consultation.id).all()
-		consultation_reports = models.get_consultation_reports_with_files (consultation_id)
+			# Append other information
+			student = User.query.get(consultation.student_id)
+			prereading_files = ConsultationPrereadingFile.query.filter_by(
+				consultation_id = consultation.id).all()
+			consultation_reports = models.get_consultation_reports_with_files (consultation_id)
 
-		return render_template(
-			'view_consultation.html', 
-			consultation=consultation, 
-			student=student, 
-			prereading_files=prereading_files,
-			consultation_reports = consultation_reports)
+			return render_template(
+				'view_consultation.html', 
+				consultation=consultation, 
+				student=student, 
+				prereading_files=prereading_files,
+				consultation_reports = consultation_reports)
+		else:
+			abort (403)
 
 
 # Search for a student
@@ -158,12 +149,13 @@ def book_consultation_set_time(consultation_scheduling_option_id):
 @bp.route("/<consultation_id>/book/calendar")
 @login_required
 def view_scheduling_options(consultation_id):
-	# View a list of consultations
-	if current_user.is_authenticated and app.models.is_admin(current_user.username):
-		consultation = Consultation.query.get (consultation_id)
-		if consultation is None:
-			flash ('Could not find the consultation.', 'error')
-			return redirect(url_for('consultations.view_consultations'))
+	# View consultation scheduling options
+	consultation = Consultation.query.get (consultation_id)
+	if consultation is None:
+		flash ('Could not find the consultation.', 'error')
+		return redirect(url_for('consultations.view_consultations'))
+
+	if app.models.is_admin(current_user.username) or current_user.id == consultation.student_id:
 		student = User.query.get(consultation.student_id)
 		if student is None:
 			flash ('Could not locate this student.', 'error')
@@ -174,6 +166,7 @@ def view_scheduling_options(consultation_id):
 			scheduling_options = scheduling_options,
 			student = student, 
 			consultation = consultation)
+	else: abort (403)
 
 
 # Delete a consultation from ID

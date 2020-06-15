@@ -129,6 +129,29 @@ class ConsultationReportFile (db.Model):
 		db.session.delete (self)
 		db.session.commit ()
 
+
+
+def get_consultation_info_array (student_id = False):
+	if student_id:
+		consultations = Consultation.query.filter_by(student_id = student_id).all()
+	else:
+		consultations = Consultation.query.all()
+	
+	# For each consultation, append additional information
+	consultations_array = []
+	for consultation in consultations:
+		consultation_dict = consultation.__dict__
+		consultation_dict['student'] = User.query.get(
+			consultation.student_id)
+		consultation_dict['teacher'] = User.query.get(
+			consultation.teacher_id)
+		consultation_dict['humanized_date'] = arrow.get(
+			consultation_dict['date']).humanize()
+		consultation_dict['scheduling_options'] = consultation.get_scheduling_options ()
+		consultations_array.append(consultation_dict)
+
+	return consultations_array
+
 def get_consultation_reports_with_files (consultation_id):
 	consultation_reports = ConsultationReport.query.filter_by(consultation_id = consultation_id).all()
 	consultation_reports_array = []

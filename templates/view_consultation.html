@@ -23,18 +23,18 @@
     <i class="fa fa-file-upload">
     </i> Upload prereading file
   </a>
-  <a href="{{url_for('consultations.view_scheduling_options', consultation_id = consultation.id)}}"
-    class="btn btn-outline-primary btn-sm" role="button">
-    <i class="fa fa-calendar-plus">
-    </i> Schedule an appointment time
-  </a>
   <a href="{{url_for('consultations.delete_consultation', consultation_id = consultation.id)}}"
     class="btn btn-outline-danger btn-sm float-right" role="button">
     <i class="fa fa-trash-alt">
     </i> Delete this consultation
   </a>
-  <br><br>
   {% endif %}
+  <a href="{{url_for('consultations.view_scheduling_options', consultation_id = consultation.id)}}"
+    class="btn btn-outline-primary btn-sm" role="button">
+    <i class="fa fa-calendar-plus">
+    </i> Schedule an appointment time
+  </a>
+  <br><br>
   <div class="card bg-light mb-3">
     <div class="card-body">
       <div class="container">
@@ -57,11 +57,11 @@
             <ul class="list-inline">
               <li class="list-inline-item">
                 <i class="fa fa-calendar" aria-hidden="true">
-                </i> 
+                </i>
                 {% if consultation.date %}
-                  {{consultation['date'].strftime('%A')}}, {{consultation['humanized_date']}}
+                {{consultation['date'].strftime('%A')}}, {{consultation['humanized_date']}}
                 {% else %}
-                  Please confirm a time slot
+                Please confirm a time slot
                 {% endif %}
               </li>
             </ul>
@@ -82,9 +82,9 @@
                 {% endif %}
               </li>
               {% endfor %}
-              </ul>
-              <em>{{consultation.description}}
-              </em>
+            </ul>
+            <em>{{consultation.description}}
+            </em>
           </div>
         </div>
       </div>
