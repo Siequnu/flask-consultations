@@ -39,7 +39,7 @@
     <div class="card-body">
       <div class="container">
         <div class="row">
-          <div class="col-2 text-center">
+          <div class="col-12 col-lg-2 text-center">
             {% if consultation.date %}
             <h1 class="display-4">
               <span class="badge badge-secondary">{{consultation['date'].strftime('%d')}}
@@ -49,7 +49,7 @@
             </h2>
             {% endif %}
           </div>
-          <div class="col-10">
+          <div class="col-12 col-lg-9">
             <h3 class="text">
               <strong>{{consultation.title}}
               </strong>
@@ -108,13 +108,13 @@
     <div class="card-body">
       <div class="container">
         <div class="row">
-          <div class="col-4">
+          <div class="col-12 col-lg-6">
             <h3 class="text">
               <strong>Report by {{report.user.username}}
               </strong>
             </h3>
           </div>
-          <div class="col-8">
+          <div class="col-12 col-lg-6">
             <a href="{{ url_for('consultations.delete_consultation_report', consultation_report_id = report.id, consultation_id = consultation.id) }} "
               class="btn btn-outline-warning btn-sm float-right" role="button">
               <i class="fa fa-trash-alt">
@@ -122,21 +122,22 @@
               Delete this report
             </a>
             <a href="{{ url_for('consultations.save_consultation_report', consultation_report_id = report.id, consultation_id = consultation.id) }}"
-              class="btn btn-outline-primary btn-sm" role="button">
+              class="btn btn-outline-secondary btn-sm" role="button">
               <i class="fa fa-edit">
               </i>
               Edit this report
             </a>
             <a href="{{ url_for('consultations.upload_report_file', consultation_report_id = report.id, consultation_id = consultation.id) }}"
-              class="btn btn-outline-secondary btn-sm" role="button">
+              class="btn btn-outline-success btn-sm" role="button">
               <i class="fa fa-file-upload">
               </i>
               Upload report documents
             </a>
           </div>
         </div>
+        <hr>
         <div class="row">
-          <div class="col-10">
+          <div class="col-12">
             <ul class="list-inline">
               <li class="list-inline-item">
                 <i class="fa fa-bullseye" aria-hidden="true">
@@ -160,8 +161,8 @@
               {% endfor %}
             </ul>
 
-            <br><br>
-            <a href="#" class="btn btn-secondary btn-sm" role="button">
+            <br>
+            <a href="#" class="btn btn-outline-info btn-sm" role="button">
               <i class="fa fa-download">
               </i> Download PDF report
             </a>
