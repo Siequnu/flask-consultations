@@ -14,9 +14,20 @@
   </div>
 
   <br>
-
+  {% if consultations|length == 0 %}
   <div class="row text-center">
-    <div class="col">
+    <div class="col-12">
+      <div class="counter">
+        <i class="fa fa-calendar-alt fa-2x"></i>
+        <h2 class="timer count-title count-number">You have no upcoming consultations</h2>
+        <br>    
+        Your mentors will schedule appointments with you.
+      </div>
+    </div>
+  </div>
+  {% else %}
+  <div class="row text-center">
+    <div class="col-12 col-lg-6">
       <div class="counter">
         <i class="fa fa-calendar-alt fa-2x"></i>
         <h2 class="timer count-title count-number">Upcoming consultations</h2>
@@ -35,7 +46,8 @@
           calendar</button></a>
       </div>
     </div>
-    <div class="col">
+    
+    <div class="col-12 col-lg-6">
       <div class="counter">
         <i class="fa fa-calendar-plus fa-2x"></i>
         <h2 class="timer count-title count-number">Unscheduled consultations</h2>
@@ -52,6 +64,7 @@
       </div>
     </div>
   </div>
+  {% endif %}
 
 
 </div>
