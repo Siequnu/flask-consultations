@@ -162,7 +162,7 @@
             </ul>
 
             <br>
-            <a href="#" class="btn btn-outline-info btn-sm" role="button">
+            <a href="{{ url_for('consultations.view_report_pdf', report_id = report.id) }}" class="btn btn-outline-info btn-sm" role="button">
               <i class="fa fa-download">
               </i> Download PDF report
             </a>

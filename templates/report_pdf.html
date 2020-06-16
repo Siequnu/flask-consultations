@@ -1,0 +1,27 @@
+{{ bootstrap.load_css() }}
+
+<!-- Custom fonts for this template -->
+<link href="/static/bootstrap/css/flatly.min.css" rel="stylesheet">
+
+
+<div class="row h-100 justify-content-center align-items-center">
+        <img src="/static/app_logo_{{config.APP_NAME}}.png" width="20px" height="20px" class="" alt="">
+</div>
+<br>
+<div class="row h-100 justify-content-center align-items-center">
+        <h2>Consultation Report</h2>
+</div>
+<div class="col-12">
+
+        <h5>Student: {{student.username}}</h4>
+                <h5>Mentor: {{teacher.username}}</h4>
+
+                        <br>
+                        <div class="card bg-light mb-3">
+                                <div class="card-body">
+                                        <p class="card-text">{{consultation_report.summary}}</p>
+                                        <p class="card-text">{{consultation_report.report}}</p>
+
+                                </div>
+                        </div>
+</div>

@@ -10,6 +10,8 @@ from app.models import User
 
 import os, arrow, json
 
+from flask_weasyprint import HTML, render_pdf
+
 
 # Render this blueprint's javascript
 @bp.route("/js/<filename>")
@@ -404,3 +406,49 @@ def delete_report_file(consultation_id, report_file_id):
 		report.delete()
 	flash('Deleted the file successfully', 'success')
 	return redirect(url_for('consultations.view_consultation', consultation_id=consultation_id))
+
+
+# Method used to show a PDF of a report	
+@bp.route('/report/<report_id>/pdf')
+@login_required
+def view_report_pdf(report_id):
+	# Find report
+	consultation_report = ConsultationReport.query.get(report_id)
+	if consultation_report is None:
+		flash('This report could not be found.', 'error')
+		return redirect(url_for('consultations.view_consultations'))
+
+	# Load the consultation
+	consultation = Consultation.query.get(consultation_report.consultation_id)
+	if consultation is None:
+		flash('This consultation could not be found.', 'error')
+		return redirect(url_for('consultations.view_consultations'))
+
+	# Load student and teacher
+	student = User.query.get(consultation.student_id)
+	teacher = User.query.get(consultation.teacher_id)
+
+	if app.models.is_admin(current_user.username) or consultation.student_id == current_user.id:
+		html = reference_pdf(
+			consultation_report = consultation_report,
+			consultation = consultation,
+			student = student,
+			teacher = teacher
+		)
+		return render_pdf (HTML(string=html))
+	abort (403)
+
+
+# Page used for generating a PDF of a report
+@bp.route('/view/pdf')
+def reference_pdf(consultation_report, consultation, student, teacher):
+	if current_user.is_authenticated and app.models.is_admin(current_user.username):
+		return render_template(
+			'report_pdf.html',
+			consultation_report = consultation_report,
+			consultation = consultation,
+			student = student,
+			teacher = teacher,
+			app_name = current_app.config['APP_NAME']
+			)
+	abort (403)
