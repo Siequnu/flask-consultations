@@ -21,7 +21,11 @@
         <i class="fa fa-calendar-alt fa-2x"></i>
         <h2 class="timer count-title count-number">You have no upcoming consultations</h2>
         <br>    
+        {% if current_user.is_admin %}
+        Consultations allow you to book a time with students, and upload pre- and post-consultation reading materials.
+        {% else %}
         Your mentors will schedule appointments with you.
+        {% endif %}
       </div>
     </div>
   </div>
