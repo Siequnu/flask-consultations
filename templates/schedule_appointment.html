@@ -41,7 +41,7 @@
                     <h2>{{option.date.strftime('%b')|upper}}
                     </h2>
                     <h3 class="text">
-                      <strong>{{option.start_time}} - {{option.end_time}}
+                      <strong>{{option.start_time.strftime('%H:%M')}} - {{option.end_time.strftime('%H:%M')}}
                       </strong>
                     </h3>
                     <ul class="list-inline">
