@@ -42,6 +42,7 @@ class Consultation (db.Model):
 		for option in scheduling_options:
 			option_dict = option.__dict__
 			# Calculate the dt object of start_time and end_time, as these are being saved as timedelta rather than datetime
+			# #¡# This turned out to be error with SQL alchemy not saving in the correct format
 			#option_dict['start_time_dt'] = datetime.strptime(str(option_dict['start_time']),'%H:%M:%S').time()
 			#option_dict['end_time_dt'] = datetime.strptime(str(option_dict['end_time']),'%H:%M:%S').time()
 			option_dict['humanized_date'] = arrow.get(option_dict['date']).humanize()
@@ -148,9 +149,6 @@ def get_consultation_info_array (student_id = False):
 			consultation.student_id)
 		consultation_dict['teacher'] = User.query.get(
 			consultation.teacher_id)
-		# Calculate the dt object of start_time and end_time, as these are being saved as timedelta rather than datetime
-		#consultation_dict['start_time_dt'] = datetime.strptime(str(consultation_dict['start_time']),'%H:%M:%S').time()
-		#consultation_dict['end_time_dt'] = datetime.strptime(str(consultation_dict['end_time']),'%H:%M:%S').time()
 		consultation_dict['humanized_date'] = arrow.get(consultation_dict['date']).humanize()
 		consultation_dict['scheduling_options'] = consultation.get_scheduling_options ()
 		consultations_array.append(consultation_dict)
