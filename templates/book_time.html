@@ -11,6 +11,9 @@
 <script src="/static/js/lib/jquery-timepicker/jquery.timepicker.min.js"></script>
 <link rel="stylesheet" href="/static/js/lib/jquery-timepicker/jquery.timepicker.min.css" />
 
+<!-- JS config -->
+<script src="/static/js/config_elmOnline.js"></script>
+
 <!-- Consultations submodule library -->
 <script src="{{url_for ('consultations.js', filename = 'consultations.js')}}"></script>
 
@@ -24,42 +27,38 @@
 <div class="container">
   <div class="row">
     <div class="col-md-12">
-      <h1><i class="fa fa-calendar-plus"></i> Schedule a consultation with {{student.username if current_user.is_admin == True else teacher.username}}</h1>
+      <h1><i class="fa fa-calendar-plus"></i> Schedule a consultation with
+        {{student.username if current_user.is_admin == True else teacher.username}}</h1>
       <hr>
       <h6>You can add as many time slot options as you like. </h6>
       <h6>When you are done, press Add time options to continue.</h6>
     </div>
   </div>
-  
+
   <br>
-  
+
   <div class="row text-center">
     <div class="col">
-        <div class="counter">
-            <i class="fa fa-clock fa-2x"></i>
-            <h2 class="timer count-title count-number">Add a time slot</h2>
-            <br>
-              {{ render_form(form, button_style='outline-dark') }}
-        </div>
+      <div class="counter">
+        <i class="fa fa-clock fa-2x"></i>
+        <h2 class="timer count-title count-number">Add a time slot</h2>
+        <br>
+        {{ render_form(form, button_style='outline-dark') }}
+      </div>
     </div>
     <div class="col">
-        <div class="counter">
-            <i class="fa fa-calendar-day fa-2x"></i>
-            <h2 class="timer count-title count-number"> Time options</h2>
-            <br>
-            <div class="bookings">
-              <!-- The bookings will be inserted here by the JS -->
-            </div>
-            <a id="submit-all" class="btn btn-success" href="#" role="button">Add time options<i class="fa fa-chevron-right"></i></a>
+      <div class="counter">
+        <i class="fa fa-calendar-day fa-2x"></i>
+        <h2 class="timer count-title count-number"> Time options</h2>
+        <br>
+        <div class="bookings">
+          <!-- The bookings will be inserted here by the JS -->
         </div>
+        <a id="submit-all" class="btn btn-success" href="#" role="button">Add time options<i
+            class="fa fa-chevron-right"></i></a>
+      </div>
     </div>
   </div>
 </div>
 
-
-
-
 {% endblock %}
-
-
-
