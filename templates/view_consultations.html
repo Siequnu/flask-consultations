@@ -4,12 +4,38 @@
 <div class="container">
   <div class="row">
     <div class="col-md-12">
+      <button type="button" class="btn btn-lg btn-outline-secondary float-right" data-toggle="modal"
+        data-target="#helpModal">
+        <i class="fa fa-info"></i>
+      </button>
       <h1><i class="fa fa-calendar-plus"></i> Consultations</h1>
+
       <hr>
       {% if current_user.is_admin %}
       <a href="{{url_for('consultations.book_consultation_find_student')}}" <button class="btn btn-lg btn-success"><i
           class="fa fa-plus-circle"></i> Book new consultation</button></a>
       {% endif %}
+    </div>
+  </div>
+
+
+  <!-- Help modal -->
+  <div class="modal fade" id="helpModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-body">
+          <h1 class="display-5"><i class="fa fa-calendar-plus"></i> Consultations</h1>
+          <p class="lead">In this section, you can schedule and view reports from your meetings with your mentors.
+          </p>
+          <hr class="my-4">
+          <p>Before an appointment, your mentors will create a page for your consultation. In this page, you can view
+            pre-consultation reading, which you should read before the session. </p>
+          <p>After the session, you will receive a report and post-consultation reading.</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -20,7 +46,7 @@
       <div class="counter">
         <i class="fa fa-calendar-alt fa-2x"></i>
         <h2 class="timer count-title count-number">You have no upcoming consultations</h2>
-        <br>    
+        <br>
         {% if current_user.is_admin %}
         Consultations allow you to book a time with students, and upload pre- and post-consultation reading materials.
         {% else %}
@@ -40,17 +66,20 @@
         <!-- Only display consultations with a scheduled date -->
         {% if consultation.date %}
         <a href="{{url_for('consultations.view_consultation', consultation_id = consultation.id)}}" <button
-          class="btn btn-light">{{consultation.title}} — {{consultation.humanized_date}}, at {{consultation.start_time.strftime('%H:%M')}}
-          with {{consultation.student.username if current_user.is_admin else consultation.teacher.username }} <i class="fa fa-chevron-right"></i></button></a>
+          class="btn btn-light">{{consultation.title}} — {{consultation.humanized_date}}, at
+          {{consultation.start_time.strftime('%H:%M')}}
+          with {{consultation.student.username if current_user.is_admin else consultation.teacher.username }} <i
+            class="fa fa-chevron-right"></i></button></a>
         <br>
         {% endif %}
         {% endfor %}
         <hr>
-        <a href="{{url_for('consultations.view_calendar')}}" <button class="btn btn-light"><i class="fa fa-chevron-right"></i> View your
+        <a href="{{url_for('consultations.view_calendar')}}" <button class="btn btn-light"><i
+            class="fa fa-chevron-right"></i> View your
           calendar</button></a>
       </div>
     </div>
-    
+
     <div class="col-12 col-lg-6">
       <div class="counter">
         <i class="fa fa-calendar-plus fa-2x"></i>
@@ -60,7 +89,8 @@
         {% for consultation in consultations %}
         {% if consultation.date == None %}
         <a href="{{url_for('consultations.view_consultation', consultation_id = consultation.id)}}" <button
-          class="btn btn-light">{{consultation.title}} with {{consultation.student.username if current_user.is_admin else consultation.teacher.username }} <i
+          class="btn btn-light">{{consultation.title}} with
+          {{consultation.student.username if current_user.is_admin else consultation.teacher.username }} <i
             class="fa fa-chevron-right"></i></button></a>
         <br>
         {% endif %}
