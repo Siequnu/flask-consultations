@@ -14,23 +14,23 @@
 <div class="container">
   {% if current_user.is_admin %}
   <a href="{{url_for('consultations.save_consultation_details', consultation_id = consultation.id)}}"
-    class="btn btn-outline-secondary btn-sm" role="button">
+    class="btn m-1 btn-outline-secondary btn-sm" role="button">
     <i class="fa fa-edit">
     </i> Edit consultation details
   </a>
   <a href="{{url_for('consultations.upload_prereading_file', consultation_id = consultation.id)}}"
-    class="btn btn-outline-success btn-sm" role="button">
+    class="btn m-1 btn-outline-success btn-sm" role="button">
     <i class="fa fa-file-upload">
     </i> Upload prereading file
   </a>
   <a href="{{url_for('consultations.delete_consultation', consultation_id = consultation.id)}}"
-    class="btn btn-outline-danger btn-sm float-right" role="button">
+    class="btn m-1 btn-outline-danger btn-sm float-right" role="button">
     <i class="fa fa-trash-alt">
     </i> Delete this consultation
   </a>
   {% endif %}
   <a href="{{url_for('consultations.view_scheduling_options', consultation_id = consultation.id)}}"
-    class="btn btn-outline-primary btn-sm" role="button">
+    class="btn m-1 btn-outline-primary btn-sm" role="button">
     <i class="fa fa-calendar-plus">
     </i> Schedule an appointment time
   </a>
