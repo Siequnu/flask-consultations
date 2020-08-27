@@ -15,7 +15,7 @@
 {% endblock templateScripts %}
 
 
-<script>
+<script type="text/javascript" nonce="{{ csp_nonce() }}">
   // Initialise the FullCalendar object
   document.addEventListener('DOMContentLoaded', function () {
     var calendarEl = document.getElementById('calendar');

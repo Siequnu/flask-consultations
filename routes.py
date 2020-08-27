@@ -1,4 +1,4 @@
-from flask import render_template, flash, redirect, url_for, request, abort, current_app, session, Response, send_from_directory
+from flask import render_template, flash, redirect, url_for, request, abort, current_app, session, Response, send_from_directory, make_response
 from flask_login import current_user, login_required
 
 from . import bp, models
@@ -18,8 +18,9 @@ from flask_weasyprint import HTML, render_pdf
 @login_required
 def js(filename):
 	filepath = 'js/' + filename
-	# is send_from_directory('/templates/js/', path) a safer approach?
-	return render_template(filepath)
+	response = make_response(render_template(filepath))
+	response.headers['Content-type'] = 'text/javascript'
+	return response
 
 
 # Consultations home page
@@ -343,7 +344,9 @@ def delete_consultation_report(consultation_id, consultation_report_id):
 
 
 # Add a report file
+from app import csrf
 @bp.route('/<consultation_report_id>/report/file/add', methods=['GET', 'POST'])
+@csrf.exempt
 @login_required
 def upload_report_file(consultation_report_id):
 	# Get the report

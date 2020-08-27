@@ -2,7 +2,7 @@
 $('#submit-all').hide();
 
 // Enable the datefield to use UI datepicker
-$('#datefield').datepicker ({dateFormat: 'yy-mm-dd'});
+$('#datefield').datepicker({ dateFormat: 'yy-mm-dd' });
 
 // Enable timepicker
 $('#start_time, #end_time').timepicker({
@@ -26,20 +26,20 @@ $(document).on('change', '#start_time', function (e) {
 });
 
 // On submitting a time-slot, add this to the right column
-$(':submit').click (function (event) {
-  var datefield = $.trim( $('#datefield').val() );
-  var start_time = $.trim( $('#start_time').val() );
-  var end_time = $.trim( $('#end_time').val() );
-  
-  $('.bookings').append (
-    '<div class="booking">' +
-	'<i class="fa fa-calendar-day"></i> <label class="date">' + datefield +
-	'</label><br><i class="fa fa-clock"></i><label class="start_time"> ' + start_time +
-	'</label> to <label class="end_time">' + end_time + '</label><hr> </div>'
-	
+$(':submit').click(function (event) {
+	var datefield = $.trim($('#datefield').val());
+	var start_time = $.trim($('#start_time').val());
+	var end_time = $.trim($('#end_time').val());
+
+	$('.bookings').append(
+		'<div class="booking">' +
+		'<i class="fa fa-calendar-day"></i> <label class="date">' + datefield +
+		'</label><br><i class="fa fa-clock"></i><label class="start_time"> ' + start_time +
+		'</label> to <label class="end_time">' + end_time + '</label><hr> </div>'
+
 	);
 	event.preventDefault();
-	
+
 	// Change the add time slot button text
 	$('#submit').prop('value', 'Add another time slot');
 
@@ -51,35 +51,38 @@ $(':submit').click (function (event) {
 });
 
 // Handle pushing the data to the API
-$('#submit-all').click (function () {
-	
- $(".booking").each(function(){
-	var datefield = $(this).find('.date').text().trim();
-	var start_time = $(this).find('.start_time').text().trim();
-	var end_time = $(this).find('.end_time').text().trim();
-	
-	// Send data via AJAX
+$('#submit-all').click(function () {
+
+	$(".booking").each(function () {
+		var datefield = $(this).find('.date').text().trim();
+		var start_time = $(this).find('.start_time').text().trim();
+		var end_time = $(this).find('.end_time').text().trim();
+
+		// Get the csrf token
+		const csrftoken = Cookies.get('_csrf_token');
+		
+		// Send data via AJAX
 		$.ajax({
 			type: "POST",
 			url: "/api/v1/consultation/schedule",
 			contentType: 'application/json',
-			headers: {'key': config.apiKey},
+			headers: { 'key': config.apiKey, 'X-CSRFToken': csrftoken },
 			data: JSON.stringify({
 				consultation_id: consultation_id,
 				date: datefield,
 				start_time: start_time,
 				end_time: end_time
 			}),
-			error: function(jqXHR, textStatus, errorThrown) {
+			error: function (jqXHR, textStatus, errorThrown) {
 				toastr.error(errorThrown);
 				toastr.error(textStatus);
 			},
-			success: function() {
+			success: function () {
 				toastr.success('Scheduling options saved successfully.');
 				window.location.replace('/consultations/' + consultation_id + '/book/calendar');
 			}
 		});
-		
- });
-	
+
+	});
+
 });

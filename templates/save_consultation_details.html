@@ -9,7 +9,10 @@
       <h1>{{title}}</h1>
     </div>
     <div class="card-body">
-      {{ render_form(form) }}
+      <form method="post">
+        <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+        {{ render_form(form) }}
+      </form>
     </div>
   </div>
 

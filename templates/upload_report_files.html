@@ -9,8 +9,8 @@
       <h1><i class="fa fa-file-upload"></i> Upload report file</h1>
       <hr>
       <p>Please select the files you want to attach to the report.</p>
+      {{ dropzone.load_js() }}
       {{ dropzone.create(action=url_for('consultations.upload_report_file', consultation_report_id = consultation_report.id)) }}
-      {{ dropzone.config() }}
       <a href="{{url_for('consultations.view_consultation', consultation_id = consultation.id)}}"
         class="btn btn-success" role="button">
         <i class="fa fa-check-circle"></i> Done
@@ -18,5 +18,4 @@
     </div>
   </div>
 </div>
-{{ dropzone.load_js() }}
 {% endblock %}
