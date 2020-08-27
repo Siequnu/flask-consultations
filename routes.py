@@ -1,17 +1,13 @@
 from flask import render_template, flash, redirect, url_for, request, abort, current_app, session, Response, send_from_directory, make_response
 from flask_login import current_user, login_required
-
 from . import bp, models
 from .forms import ConsultationTimeForm, ConsultationDetailsForm, ConsultationReportForm
-
 from .models import Consultation, ConsultationPrereadingFile, ConsultationReport, ConsultationReportFile, ConsultationSchedulingOption
 import app.models
 from app.models import User
-
+from app import csrf
 import os, arrow, json
-
 from flask_weasyprint import HTML, render_pdf
-
 
 # Render this blueprint's javascript
 @bp.route("/js/<filename>")
@@ -242,6 +238,7 @@ def save_consultation_details(consultation_id):
 # Add a pre-reading file
 @bp.route('/<consultation_id>/prereading/add', methods=['GET', 'POST'])
 @login_required
+@csrf.exempt
 def upload_prereading_file(consultation_id):
 	if request.method == 'POST':
 		file_obj = request.files
@@ -344,9 +341,8 @@ def delete_consultation_report(consultation_id, consultation_report_id):
 
 
 # Add a report file
-from app import csrf
 @bp.route('/<consultation_report_id>/report/file/add', methods=['GET', 'POST'])
-@csrf.exempt
+@csrf.exempt #¡# This should be fixed, rather than disabled!
 @login_required
 def upload_report_file(consultation_report_id):
 	# Get the report
