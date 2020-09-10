@@ -1,7 +1,25 @@
 {% extends "header.html" %} {% block app_content %}
 {% from 'bootstrap/form.html' import render_form %}
 
-{% block templateScripts %}
+<br>
+<div class="container">
+  <div class="row">
+    <div class="col-md-12">
+      <h1><i class="fa fa-calendar-plus"></i> Your consultation calendar</h1>
+      <hr>
+    </div>
+  </div>
+
+  <br>
+
+  <div class="row">
+    <div class="col">
+      <div id='calendar'></div>
+    </div>
+  </div>
+</div>
+
+
 <!-- Load the FullCalendar library as part of the main template-->
 <link href='/static/js/lib/fullcalendar-4.4.2/packages/core/main.css' rel='stylesheet' />
 <link href='/static/js/lib/fullcalendar-4.4.2/packages/daygrid/main.css' rel='stylesheet' />
@@ -12,10 +30,10 @@
 <script src='/static/js/lib/fullcalendar-4.4.2/packages/list/main.js'></script>
 <script src='/static/js/lib/fullcalendar-4.4.2/packages/daygrid/main.js'></script>
 <script src='/static/js/lib/fullcalendar-4.4.2/packages/timegrid/main.js'></script>
-{% endblock templateScripts %}
 
 
-<script type="text/javascript"  >
+
+<script type="text/javascript">
   // Initialise the FullCalendar object
   document.addEventListener('DOMContentLoaded', function () {
     var calendarEl = document.getElementById('calendar');
@@ -26,17 +44,17 @@
         {% for consultation in consultations %}
         {% if consultation.date != None %}
           {
-        'title': '{{consultation.student.username if current_user.is_admin else consultation.teacher.username}}: {{consultation.title}}',
-        'start': '{{consultation.start_time}}',
-        'end': '{{consultation.end_time}}',
-        'allDay': false,
-        'url': '/consultations/view/' + {{ consultation.id }}
+      'title': '{{consultation.student.username if current_user.is_admin else consultation.teacher.username}}: {{consultation.title}}',
+      'start': '{{consultation.start_time}}',
+      'end': '{{consultation.end_time}}',
+      'allDay': false,
+      'url': '/consultations/view/' + {{ consultation.id }}
           },
     {% endif %}
     {% endfor %}
       ],
     header: {
-    left: 'timeGridWeek dayGridMonth listWeek'
+    left: 'timeGridWeek dayGridMonth listYear'
   },
     plugins: ['dayGrid', 'timeGrid', 'list'],
     minTime: '07:00:00',
@@ -56,24 +74,6 @@
   });
 
 </script>
-
-<br>
-<div class="container">
-  <div class="row">
-    <div class="col-md-12">
-      <h1><i class="fa fa-calendar-plus"></i> Your consultation calendar</h1>
-      <hr>
-    </div>
-  </div>
-
-  <br>
-
-  <div class="row">
-    <div class="col">
-      <div id='calendar'></div>
-    </div>
-  </div>
-</div>
 
 
 
