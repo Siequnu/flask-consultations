@@ -1,6 +1,5 @@
 {% extends "header.html" %} {% block app_content %}
 
-<br>
 <div class="container">
   <div class="row">
     <div class="col-md-12">
@@ -12,7 +11,7 @@
 
       <hr>
       {% if current_user.is_admin %}
-      <a href="{{url_for('consultations.book_consultation_find_student')}}" <button class="btn btn-lg btn-success"><i
+      <a href="{{url_for('consultations.book_consultation_find_student')}}" <button class="btn btn-lg btn-outline-success"><i
           class="fa fa-plus-circle"></i> Book new consultation</button></a>
       {% endif %}
     </div>
