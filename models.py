@@ -216,3 +216,15 @@ def delete_consultation_from_id (consultation_id):
 		return True
 	else:
 		return False
+
+
+def delete_all_consultations_associated_to_user(user_id):
+	"""
+	Delete all the consultations attached to a user_id.
+	This deletes both student interactions and teacher interactions
+	"""
+	for consultation in Consultation.query.filter_by(teacher_id = user_id):
+		delete_consultation_from_id(consultation.id)
+
+	for consultation in Consultation.query.filter_by(student_id = user_id):
+		delete_consultation_from_id(consultation.id)
